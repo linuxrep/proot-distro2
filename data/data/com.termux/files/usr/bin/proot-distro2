@@ -10,7 +10,7 @@ function distro_install() {
 	read -p "url: " url
 	read -p "sha256sum: " sha
 	read -p "login cmd proot-distro: " cmd
-	file=/data/data/com.termux/files/usr/var/lib/proot-distro/dlcache/$name.tar.xz
+	file=/data/data/com.termux/files/usr/var/lib/proot-distro/dlcache/$name-$arch.tar.xz
 	if [ -e "$file" ]; then
 		cp $file $distro_path/$name
 		cd $distro_path/$name
@@ -24,7 +24,6 @@ function distro_install() {
 		echo "[*] Finish. Run: $name"
 	else
 		curl -o $file -OL $url
-		echo -n "$sha" | sha256sum -c -
 		cp $file $distro_path/$name
 		cd $distro_path/$name
 		tar -xvf $name-$arch.tar.xz
