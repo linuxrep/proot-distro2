@@ -14,7 +14,7 @@ function distro_install() {
 	if [ -e "$file" ]; then
 		cp $file $distro_path/$name
 		cd $distro_path/$name
-		tar -xvf $name.tar.xz
+		tar -xvf $name-$arch.tar.xz
 		rm $name.tar.xz
 		echo 'DISTRO_NAME="$name"' >> $sh_path/$name.sh
 		echo 'TARBALL_URL['"$arch"']="$url"' >> $sh_path/$name.sh
@@ -27,7 +27,7 @@ function distro_install() {
 		echo -n "$sha" | sha256sum -c -
 		cp $file $distro_path/$name
 		cd $distro_path/$name
-		tar -xvf $name.tar.xz
+		tar -xvf $name-$arch.tar.xz
 		rm $name.tar.xz
 		echo 'DISTRO_NAME="$name"' >> $sh_path/$name.sh
 		echo 'TARBALL_URL['"$arch"']="$url"' >> $sh_path/$name.sh
