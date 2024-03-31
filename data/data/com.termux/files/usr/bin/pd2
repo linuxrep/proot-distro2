@@ -1,0 +1,63 @@
+#!/bin/bash
+
+sh_path=/data/data/com.termux/files/usr/etc/proot-distro/
+distro_path=/data/data/com.termux/files/usr/var/lib/proot-distro/installed-rootfs/
+
+function distro_install() {
+	name="$1"
+	mkdir -p $distro_path/$name
+	read -p "arch: " arch
+	read -p "url: " url
+	read -p "sha256sum: " sha
+	read -p "login cmd proot-distro: " cmd
+	file=/data/data/com.termux/files/usr/var/lib/proot-distro/dlcache/$name.tar.xz
+	if [ -e "$file" ]; then
+		cp $file $distro_path/$name
+		cd $distro_path/$name
+		tar -xvf $name.tar.xz
+		rm $name.tar.xz
+		echo 'DISTRO_NAME="$name"' >> $sh_path/$name.sh
+		echo 'TARBALL_URL['"$arch"']="$url"' >> $sh_path/$name.sh
+		echo 'TARBALL_SHA256['"$arch"']="$sha"' >> $sh_path/$name.sh
+		echo "$cmd" >> $PREFIX/bin/$name
+		chmod +x $PREFIX/bin/$name
+		echo "[*] Finish. Run: $name"
+	else
+		curl -o $file -OL $url
+		echo -n "$sha" | sha256sum -c -
+		cp $file $distro_path/$name
+		cd $distro_path/$name
+		tar -xvf $name.tar.xz
+		rm $name.tar.xz
+		echo 'DISTRO_NAME="$name"' >> $sh_path/$name.sh
+		echo 'TARBALL_URL['"$arch"']="$url"' >> $sh_path/$name.sh
+		echo 'TARBALL_SHA256['"$arch"']="$sha"' >> $sh_path/$name.sh
+		echo "$cmd" >> $PREFIX/bin/$name
+		chmod +x $PREFIX/bin/$name
+		echo "[*] Finish. Run: $name"
+	fi
+}
+
+function distro_remove() {
+	name="$1"
+	echo -n "Remove: $name" && rm -rf $distro_path/$name && rm $sh_path/$name.sh && rm $PREFIX/bin/$name && echo "...Done"
+}
+
+function distro_login() {
+	name="$1"
+	if [ "$2" = "as" ]; then
+		pd sh $name --user $3
+	else
+		pd sh $name
+	fi
+}
+
+if [[ "$1" = "install" || "$1" = "i" ]]; then
+	distro_install "$2"
+elif [[ "$1" = "remove" || "$1" = "rm" ]]; then
+	distro_remove "$2"
+elif [[ "$1" = "login" || "$1" = "sh" ]]; then
+	distro_login "$2" "$3" "$4"
+else
+	echo "Invalid"
+fi

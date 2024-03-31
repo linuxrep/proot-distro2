@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cp  data/data/com.termux/files/usr/bin/pd2 $PREFIX/bin/pd2
+cp  data/data/com.termux/files/usr/bin/proot-distro2 $PREFIX/bin/proot-distro2
+chmod +x $PREFIX/bin/*
+
